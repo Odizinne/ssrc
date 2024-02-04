@@ -26,6 +26,8 @@ While you can stream at your native screen resolution, it may not be optimal:
 
 ## How to use
 
+[Download it](https://gitlab.com/aethernali.live/ssrcl-steam-stream-resolution-changer-for-linux/-/raw/main/steam_stream_resolution_changer?ref_type=heads&inline=false)
+
 Get your adapter name and modes by running `xrandr`
 
 If your display does not support your desired stream resolution, you might be able to create it. You can see plenty of tutorials online (xrandr create custom resolution)
