@@ -1,5 +1,7 @@
 import os
+import sys
 import time
+import argparse
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -8,17 +10,35 @@ def get_cursor_position(file):
     cursor_position = file.tell()
     return cursor_position
 
-# Path to steam stream log file
-file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
+def parse_arguments():
+    if len(sys.argv) < 2:
+        print("You must specify desktop resolution, stream resolution, and adapter.")
+        print("You can get information about the adapter and supported resolutions by running 'xrandr'.")
+        print("Run this script with '--help' to get more information about arguments.")
+        sys.exit(1)
 
-############################################
-# Set your values here
-# You can get your display adapter and modes
-# by running xrandr in a terminal
-DISPLAY = "DisplayPort-0"
-STREAM_RESOLUTION = "1280x800"
-DEFAULT_RESOLUTION = "2560x1440"
-############################################
+    parser = argparse.ArgumentParser(description="Monitor and change display settings based on log file events")
+    parser.add_argument("-d", "--desktop-res", help="Default desktop resolution", required=True)
+    parser.add_argument("-s", "--stream-res", help="Streaming resolution", required=True)
+    parser.add_argument("-a", "--adapter", help="Display adapter", required=True)
+    args = parser.parse_args()
+
+    # Remove quotes around resolution values, if present
+    args.desktop_res = args.desktop_res.strip('"')
+    args.stream_res = args.stream_res.strip('"')
+
+    return args
+
+# Parse command-line arguments
+args = parse_arguments()
+
+# Print the selected values
+print(f"Selected Desktop Resolution: {args.desktop_res}")
+print(f"Selected Streaming Resolution: {args.stream_res}")
+print(f"Selected Display Adapter: {args.adapter}")
+
+# Specify the path to your file
+file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
 
 # Create a list to store the initial lines in the file
 initial_lines = []
@@ -48,14 +68,14 @@ class MyHandler(FileSystemEventHandler):
                 for line in file:
                     # Check if the line contains "Streaming initialized" and is not in the initial lines or already processed
                     if "Streaming initialized" in line and line not in initial_lines and line not in processed_lines:
-                        print("started")
+                        print("Applying stream resolution")
                         processed_lines.add(line)
-                        os.system(f"xrandr --output {DISPLAY} --mode {STREAM_RESOLUTION}")
+                        os.system(f"xrandr --output {args.adapter} --mode {args.stream_res}")
                     # Check if the line contains "PulseAudio: Context connection terminated" and is not in the initial lines or already processed
                     elif "PulseAudio: Context connection terminated" in line and line not in initial_lines and line not in processed_lines:
-                        print("stopped")
+                        print("Applying desktop resolution")
                         processed_lines.add(line)
-                        os.system(f"xrandr --output {DISPLAY} --mode {DEFAULT_RESOLUTION}")
+                        os.system(f"xrandr --output {args.adapter} --mode {args.desktop_res}")
 
                 # Update the last cursor position
                 self.last_cursor_position = get_cursor_position(file)
