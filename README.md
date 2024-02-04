@@ -54,4 +54,5 @@ Priority order
 - **[DONE]** Adding option to mute audio on host (since this is also broken in steam)
 - Use variable to detect if running X/Wayland and print error message on wayland
 - Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
+- Setup a CI to keep track of prebuilt binary
 - Get python skills
