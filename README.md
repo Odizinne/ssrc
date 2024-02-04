@@ -27,13 +27,16 @@ While you can stream at your native screen resolution, it may not be optimal:
 ## How to use
 
 Get your adapter name and modes by running `xrandr`
-Edit the file to set your adapter name, display resolution, and stream resolution.
 
 If your display does not support your desired stream resolution, you might be able to create it. You can see plenty of tutorials online (xrandr create custom resolution)
 
-`python3 steam_stream_resolution_change.py`
+- `-s` Stream resolution. The resolution your screen will go to when stream is started.
+- `-d` Desktop resolution. The resolution your screen will go to when stream is stopped.
+- `-a` Adapter name. 
 
-I recommend to autostart it.
+ex: `python3 steam_stream_resolution_change.py` -s 1280x800 -d 2560x1440 -a DisplayPort-0
+
+You can autostart it with the desired arguments for a more seemless experience.
 
 ## How does it work
 
