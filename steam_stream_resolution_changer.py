@@ -1,88 +1,85 @@
 import os
-import sys
-import time
+import re
 import argparse
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-def get_cursor_position(file):
-    cursor_position = file.tell()
-    return cursor_position
 
-def parse_arguments():
-    if len(sys.argv) < 2:
-        print("You must specify desktop resolution, stream resolution, and adapter.")
-        print("You can get information about the adapter and supported resolutions by running 'xrandr'.")
-        print("Run this script with '--help' to get more information about arguments.")
-        sys.exit(1)
+parser = argparse.ArgumentParser(description="Monitor and adjust streaming settings.")
+parser.add_argument('-a', '--audio', action='store_true', help='Play audio on host')
+args = parser.parse_args()
 
-    parser = argparse.ArgumentParser(description="Monitor and change display settings based on log file events")
-    parser.add_argument("-d", "--desktop-res", metavar='', help="Will apply when stream end.", required=True)
-    parser.add_argument("-s", "--stream-res", metavar='', help="Will apply when stream start.", required=True)
-    parser.add_argument("-a", "--adapter", metavar='', help="The screen you want to control.", required=True)
-    args = parser.parse_args()
+def get_default_resolution_and_adapter():
+    xrandr_output = os.popen("xrandr").read()
+    match = re.search(r'(?P<adapter>\w+-\d+) connected primary (?P<resolution>\d+x\d+)', xrandr_output)
 
-    args.desktop_res = args.desktop_res.strip('"')
-    args.stream_res = args.stream_res.strip('"')
+    if match:
+        return match.group("adapter"), match.group("resolution")
+    else:
+        raise ValueError("Unable to extract default resolution and adapter from xrandr output")
 
-    return args
+def process_line(line):
+    global default_adapter
+    global default_resolution
 
-args = parse_arguments()
+    if "Maximum capture:" in line:
+        match = re.search(r'\d+x\d+', line)
+        if match:
+            resolution = match.group()
+            print(f"Applying stream resolution: {resolution}")
+            os.system(f"xrandr --output {default_adapter} --mode {resolution}")
 
-# Print the selected values
-print(f"Selected Desktop Resolution: {args.desktop_res}")
-print(f"Selected Streaming Resolution: {args.stream_res}")
-print(f"Selected Display Adapter: {args.adapter}")
+            if not args.audio:
+                print("Muting host audio")
+                os.system("pactl set-sink-mute @DEFAULT_SINK@ true")
+    elif "terminated" in line and line not in initial_lines and line not in processed_lines:
+        print("Applying default desktop resolution")
+        processed_lines.add(line)
+        os.system(f"xrandr --output {default_adapter} --mode {default_resolution}")
+
+        if not args.audio:
+            print("Resuming host audio")
+            os.system("pactl set-sink-mute @DEFAULT_SINK@ false")
+
+default_adapter, default_resolution = get_default_resolution_and_adapter()
+
+print(f"Default Desktop Resolution: {default_resolution}")
+print(f"Default Display Adapter: {default_adapter}")
+
+if args.audio:
+     print("Playing audio on host: enabled")
+else:
+     print("Playing audio on host: disabled")
 
 file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
 
-# Create a list to store the initial lines in the file
-initial_lines = []
-
-# Open the file in read mode to read the initial lines
 with open(file_path, 'r') as file:
     initial_lines = file.readlines()
 
-# Create a set to store the processed lines
 processed_lines = set()
 
-# Initialize the variables for the cursor position, display, and resolutions
-last_cursor_position = 0
-
-class MyHandler(FileSystemEventHandler):
-    def __init__(self, last_cursor_position):
-        self.last_cursor_position = last_cursor_position
+class StreamStatusMonitor(FileSystemEventHandler):
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.last_cursor_position = os.stat(self.file_path).st_size
 
     def on_modified(self, event):
-        if event.src_path == file_path:
-            with open(file_path, 'r') as file:
-                # Reposition the cursor to the last processed position
+        if event.src_path == self.file_path:
+            with open(self.file_path, 'r') as file:
                 file.seek(self.last_cursor_position)
 
-                # Iterate through each line in the file
                 for line in file:
-                    # Check if the line contains "Streaming initialized" and is not in the initial lines or already processed
-                    if "Streaming initialized" in line and line not in initial_lines and line not in processed_lines:
-                        print("Applying stream resolution")
-                        processed_lines.add(line)
-                        os.system(f"xrandr --output {args.adapter} --mode {args.stream_res}")
-                    # Check if the line contains "PulseAudio: Context connection terminated" and is not in the initial lines or already processed
-                    elif "PulseAudio: Context connection terminated" in line and line not in initial_lines and line not in processed_lines:
-                        print("Applying desktop resolution")
-                        processed_lines.add(line)
-                        os.system(f"xrandr --output {args.adapter} --mode {args.desktop_res}")
+                    process_line(line)
 
-                # Update the last cursor position
-                self.last_cursor_position = get_cursor_position(file)
+                self.last_cursor_position = file.tell()
 
 observer = Observer()
-event_handler = MyHandler(last_cursor_position)
+event_handler = StreamStatusMonitor(file_path)
 observer.schedule(event_handler, path=os.path.dirname(file_path), recursive=False)
 observer.start()
 
 try:
-    while True:
-        time.sleep(.1)
+    observer.join()
 except KeyboardInterrupt:
     observer.stop()
 

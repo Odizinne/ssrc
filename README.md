@@ -24,21 +24,21 @@ While you can stream at your native screen resolution, it may not be optimal:
 - python3
 - watchdog (pip install watchdog)
 
+The standalone executable should not require python3 or watchdog.
+
 ## How to use
 
 [Download it](https://gitlab.com/aethernali.live/ssrcl-steam-stream-resolution-changer-for-linux/-/raw/main/steam_stream_resolution_changer?ref_type=heads&inline=false)
 
-Get your adapter name and modes by running `xrandr`
 
-If your display does not support your desired stream resolution, you might be able to create it. You can see plenty of tutorials online (xrandr create custom resolution)
-
-- `-s` Stream resolution. The resolution your screen will go to when stream is started.
-- `-d` Desktop resolution. The resolution your screen will go to when stream is stopped.
 - `-a` Adapter name. 
 
-ex: `steam_stream_resolution_changer -s 1280x800 -d 2560x1440 -a DisplayPort-0`
+Run `steam_stream_resolution_changer`.
 
-You can autostart it with the desired arguments for a more seemless experience.
+You can add `-a` or `--audio` to play audio on host.
+Default behavior is to mute host.
+
+You can autostart it for a more seemless experience.
 
 ## How does it work
 
@@ -50,10 +50,10 @@ It uses xrandr to set the specified resolutions.
 
 Priority order
 
-- Adding automatic stream resolution based on client resolution
-- Adding automatic desktop resolution
-- Adding automatic adapter selection
-- Adding option to mute audio on host (since this is also broken in steam)
+- **[DONE]** Adding automatic stream resolution based on client resolution
+- **[DONE]** Adding automatic desktop resolution
+- **[DONE]** Adding automatic adapter selection
+- **[DONE]** Adding option to mute audio on host (since this is also broken in steam)
 - Use variable to detect if running X/Wayland and print error message on wayland
 - Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
 - Get python skills
