@@ -48,6 +48,7 @@ It uses xrandr to set the specified resolutions.
 
 ## What to improve
 
+- Adding automatic stream resolution based on client resolution
 - Use variable to detect if running X/Wayland
 - Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
 - Get python skills
