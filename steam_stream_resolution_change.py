@@ -8,8 +8,17 @@ def get_cursor_position(file):
     cursor_position = file.tell()
     return cursor_position
 
-# Specify the path to your file
+# Path to steam stream log file
 file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
+
+############################################
+# Set your values here
+# You can get your display adapter and modes
+# by running xrandr in a terminal
+DISPLAY = "DisplayPort-0"
+STREAM_RESOLUTION = "1280x800"
+DEFAULT_RESOLUTION = "2560x1440"
+############################################
 
 # Create a list to store the initial lines in the file
 initial_lines = []
@@ -21,7 +30,7 @@ with open(file_path, 'r') as file:
 # Create a set to store the processed lines
 processed_lines = set()
 
-# Initialize the variable for the cursor position
+# Initialize the variables for the cursor position, display, and resolutions
 last_cursor_position = 0
 
 # Define a class to handle file modification events
@@ -41,12 +50,12 @@ class MyHandler(FileSystemEventHandler):
                     if "Streaming initialized" in line and line not in initial_lines and line not in processed_lines:
                         print("started")
                         processed_lines.add(line)
-                        os.system("xrandr --output DisplayPort-0 --mode 1280x800")
+                        os.system(f"xrandr --output {DISPLAY} --mode {STREAM_RESOLUTION}")
                     # Check if the line contains "PulseAudio: Context connection terminated" and is not in the initial lines or already processed
                     elif "PulseAudio: Context connection terminated" in line and line not in initial_lines and line not in processed_lines:
                         print("stopped")
                         processed_lines.add(line)
-                        os.system("xrandr --output DisplayPort-0 --mode 2560x1440")
+                        os.system(f"xrandr --output {DISPLAY} --mode {DEFAULT_RESOLUTION}")
 
                 # Update the last cursor position
                 self.last_cursor_position = get_cursor_position(file)
