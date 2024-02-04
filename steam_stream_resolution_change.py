@@ -5,7 +5,6 @@ import argparse
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Function to get the current cursor position in the file
 def get_cursor_position(file):
     cursor_position = file.tell()
     return cursor_position
@@ -18,18 +17,16 @@ def parse_arguments():
         sys.exit(1)
 
     parser = argparse.ArgumentParser(description="Monitor and change display settings based on log file events")
-    parser.add_argument("-d", "--desktop-res", help="Default desktop resolution", required=True)
-    parser.add_argument("-s", "--stream-res", help="Streaming resolution", required=True)
-    parser.add_argument("-a", "--adapter", help="Display adapter", required=True)
+    parser.add_argument("-d", "--desktop-res", metavar='', help="Will apply when stream end.", required=True)
+    parser.add_argument("-s", "--stream-res", metavar='', help="Will apply when stream start.", required=True)
+    parser.add_argument("-a", "--adapter", metavar='', help="The screen you want to control.", required=True)
     args = parser.parse_args()
 
-    # Remove quotes around resolution values, if present
     args.desktop_res = args.desktop_res.strip('"')
     args.stream_res = args.stream_res.strip('"')
 
     return args
 
-# Parse command-line arguments
 args = parse_arguments()
 
 # Print the selected values
@@ -37,7 +34,6 @@ print(f"Selected Desktop Resolution: {args.desktop_res}")
 print(f"Selected Streaming Resolution: {args.stream_res}")
 print(f"Selected Display Adapter: {args.adapter}")
 
-# Specify the path to your file
 file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
 
 # Create a list to store the initial lines in the file
@@ -53,7 +49,6 @@ processed_lines = set()
 # Initialize the variables for the cursor position, display, and resolutions
 last_cursor_position = 0
 
-# Define a class to handle file modification events
 class MyHandler(FileSystemEventHandler):
     def __init__(self, last_cursor_position):
         self.last_cursor_position = last_cursor_position
@@ -80,7 +75,6 @@ class MyHandler(FileSystemEventHandler):
                 # Update the last cursor position
                 self.last_cursor_position = get_cursor_position(file)
 
-# Instantiate an observer and attach the event handler
 observer = Observer()
 event_handler = MyHandler(last_cursor_position)
 observer.schedule(event_handler, path=os.path.dirname(file_path), recursive=False)
