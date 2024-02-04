@@ -36,7 +36,7 @@ If your display does not support your desired stream resolution, you might be ab
 - `-d` Desktop resolution. The resolution your screen will go to when stream is stopped.
 - `-a` Adapter name. 
 
-ex: `python3 steam_stream_resolution_change.py` -s 1280x800 -d 2560x1440 -a DisplayPort-0
+ex: `steam_stream_resolution_changer -s 1280x800 -d 2560x1440 -a DisplayPort-0`
 
 You can autostart it with the desired arguments for a more seemless experience.
 
