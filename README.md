@@ -48,7 +48,12 @@ It uses xrandr to set the specified resolutions.
 
 ## What to improve
 
+Priority order
+
 - Adding automatic stream resolution based on client resolution
-- Use variable to detect if running X/Wayland
+- Adding automatic desktop resolution
+- Adding automatic adapter selection
+- Adding option to mute audio on host (since this is also broken in steam)
+- Use variable to detect if running X/Wayland and print error message on wayland
 - Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
 - Get python skills
