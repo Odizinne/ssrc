@@ -1,6 +1,6 @@
 # SSRCL - Steam Stream Resolution Changer for Linux
 
-Stupid python script written 90% by ChatGPT. (i don't know python at all)
+Stupid python script written 90% by ChatGPT.
 
 **I made this for my own use. This is my first approach with python and i know nothing about it. Yes my code is bad and I know it. No pretention here.**
 
@@ -31,12 +31,9 @@ The standalone executable should not require python3 or watchdog.
 
 [Download it](https://gitlab.com/aethernali.live/ssrcl-steam-stream-resolution-changer-for-linux/-/raw/main/steam_stream_resolution_changer?ref_type=heads&inline=false)
 
-
-- `-a` Adapter name. 
-
 Run `steam_stream_resolution_changer`.
 
-You can add `-a` or `--audio` to play audio on host.
+You can add `-a` or `--audio` to play audio on host.<br/>
 Default behavior is to mute host.
 
 You can autostart it for a more seemless experience.
