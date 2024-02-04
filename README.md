@@ -5,6 +5,7 @@ Stupid python script written 90% by ChatGPT. (i don't know python at all)
 **I made this for my own use. This is my first approach with python and i know nothing about it. Yes my code is bad and I know it. No pretention here.**
 
 The goal of this is to fix steam resolution not changing on linux when streaming with remote play.<br/>
+Also muting host audio when streaming (this can be disabled)<br/>
 This will only work with **X11** since i'm using xrandr for resolution changes.
 
 It may not be optimal but it works.<br/>
