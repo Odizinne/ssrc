@@ -52,7 +52,13 @@ To uninstall run
 
 ## How to use
 
-Run `steam_stream_resolution_changer` from a terminal. add `-a` if you want to keep audio on host.
+Run `steam_stream_resolution_changer` from a terminal.
+
+Arguments:
+
+- `-a, --audio` play audio on the host
+- `-c, --client-resolution WidthXHeight` bypass client resolution autodetection.
+Usefull if the resolution take too much time to set and if you always stream to the same device.
 
 ## How does it work
 
