@@ -1,6 +1,6 @@
 # SSRCL - Steam Stream Resolution Changer for Linux
 
-Stupid python script written 90% by ChatGPT.
+Python script written with the help of ChatGPT.
 
 **I made this for my own use. This is my first approach with python and i know nothing about it. Yes my code is bad and I know it. No pretention here.**
 
@@ -24,6 +24,11 @@ While you can stream at your native screen resolution, it may not be optimal:
 - xrandr
 - python3
 - watchdog (pip install watchdog)
+
+Optional
+
+- pactl (mute audio on host)
+- gnome-randr-rust (gnome wayland support)
 
 The standalone executable should not require python3 or watchdog.
 
@@ -52,7 +57,8 @@ Priority order
 - **[DONE]** Adding automatic desktop resolution
 - **[DONE]** Adding automatic adapter selection
 - **[DONE]** Adding option to mute audio on host (since this is also broken in steam)
-- Use variable to detect if running X/Wayland and print error message on wayland
-- Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
+- **[DONE]** Use variable to detect if running X/Wayland and print warning on wayland
+- **[PARTIAL]** Implement something to change resolution on Wayland (as far as i know there is no "official" way to do it)
 - Setup a CI to keep track of prebuilt binary
+- New name
 - Get python skills
