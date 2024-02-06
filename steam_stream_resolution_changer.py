@@ -6,6 +6,11 @@ file_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
 command = f"tail -F {file_path}"
 resolution_pattern = re.compile(r'Maximum capture: (\d+x\d+)')
 
+# Open the log first to clear content (We do not want old entries)
+
+file = open(file_path,"w")
+file.close()
+
 def get_x11_default_resolution_and_adapter():
     xrandr_output = os.popen("xrandr").read()
     match = re.search(r'(?P<adapter>\w+-\d+) connected primary (?P<resolution>\d+x\d+)', xrandr_output)
@@ -46,6 +51,7 @@ def start_stream(streaming_resolution, session_type, default_adapter, filtered_r
 
     if session_type == "x11":
         os.system(f"xrandr --output {default_adapter} --mode {streaming_resolution}")
+        print(f"Setting host to {streaming_resolution}")
     elif session_type == "wayland" and (matching_resolution := next((res for res in filtered_resolutions if streaming_resolution in res), None)):
         desired_res = matching_resolution
         print(f"Matching resolution found: {desired_res}")
@@ -60,6 +66,7 @@ def stop_stream(session_type, default_adapter, default_resolution, wayland_adapt
 
     if session_type == "x11":
         os.system(f"xrandr --output {default_adapter} --mode {default_resolution}")
+        print(f"Setting host to {default_resolution}")
     elif session_type == "wayland":
         os.system(f"gnome-randr modify --mode {wayland_default_resolution} {wayland_adapter_name}")
 
