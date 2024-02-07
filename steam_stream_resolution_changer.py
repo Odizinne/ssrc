@@ -61,6 +61,10 @@ def start_stream(streaming_resolution, session_type, default_adapter, filtered_r
         print("Muting host audio")
         os.system("pactl set-sink-mute @DEFAULT_SINK@ true")
 
+    if args.openrgb:
+        os.system(f"openrgb --noautoconnect -c {args.openrgb} > /dev/null 2>&1")
+
+
 def stop_stream(session_type, default_adapter, default_resolution, wayland_adapter_name, wayland_default_resolution, args):
     print("Stream stopped")
 
@@ -74,14 +78,18 @@ def stop_stream(session_type, default_adapter, default_resolution, wayland_adapt
         print("Resuming host audio")
         os.system("pactl set-sink-mute @DEFAULT_SINK@ false")
 
+    if args.openrgb:
+        os.system("openrgb --noautoconnect -c 000000 > /dev/null 2>&1")
+
 def main():
     parser = argparse.ArgumentParser(description="Monitor and adjust streaming settings.")
     parser.add_argument('-a', '--audio', action='store_true', help='Play audio on host')
-    parser.add_argument('-c', '--client-resolution', help='Bypass client resolution detection by using a specified one')
+    parser.add_argument('-c', '--client-resolution', help='Usage: -c "WidhtXHeight". Bypass client resolution detection by using a specified one')
+    parser.add_argument('-o', '--openrgb', help='Usage: -o "hex color code". Apply the specified color to all LEDs supported by OpenRGB')
 
     args = parser.parse_args()
-    print(f"{args.client_resolution}")
-
+    print(f"User specified client res: {args.client_resolution}")
+    print(f"RGB Color: {args.openrgb}")
     session_type = os.getenv('XDG_SESSION_TYPE')
     print(f"Session type: {session_type}")
 

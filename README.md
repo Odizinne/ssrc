@@ -24,8 +24,9 @@ While you can stream at your native screen resolution, it may not be optimal:
 - watchdog
 - pyinstaller
 
-Optional
+Optional:
 
+- openrgb (toggle RGB to single color on stream)
 - pactl (mute audio on host)
 - gnome-randr-rust (gnome wayland support)
 
@@ -54,8 +55,9 @@ Run `steam_stream_resolution_changer` from a terminal.
 Arguments:
 
 - `-a, --audio` play audio on the host
-- `-c, --client-resolution WidthXHeight` bypass client resolution autodetection.
+- `-c, --client-resolution "WidthXHeight"` bypass client resolution autodetection.
 Usefull if the resolution take too much time to set and if you always stream to the same device.
+- `-o, --openrgb "HexColorCode"` Use OpenRGB to turn on your lights to the desired color when stream is active. Turn off at stream end.
 
 ## How does it work
 
