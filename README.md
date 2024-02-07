@@ -9,9 +9,6 @@ Also muting host audio when streaming (this can be disabled)<br/>
 This will only work with **X11** since i'm using xrandr for resolution changes.
 Experimental support is present for Gnome wayland only.
 
-It may not be optimal but it works.<br/>
-Feel free to fork it, improve it, merge request it, or submit ideas.
-
 ## Benefits
 
 While you can stream at your native screen resolution, it may not be optimal:
@@ -62,10 +59,5 @@ Usefull if the resolution take too much time to set and if you always stream to 
 
 ## How does it work
 
-This script looks for some defined strings in `~/.steam/steam/logs/streaming_log.txt` to know if a stream is started or stopped.<br/>
+This looks for some defined strings in `~/.steam/steam/logs/streaming_log.txt` to know if a stream is started or stopped.<br/>
 It then set your monitor to the client resolution.
-
-## What to improve
-
-- New name for this project
-- Get python skills
