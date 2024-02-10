@@ -1,4 +1,4 @@
-# SSRCL - Steam Stream Resolution Changer for Linux
+# SSRC - Steam Stream Resolution Changer (for Linux)
 
 Python script written with the help of ChatGPT.
 
