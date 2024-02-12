@@ -20,29 +20,28 @@ def get_output_info():
 
 def start_stream(default_adapter, streaming_resolution, args):
     print("Stream started")
-    print(f"Requested client resolution: {streaming_resolution}")
-
+    print(f"Setting host to requested client resolution: {streaming_resolution}")
     subprocess.run(["xrandr", "--output", default_adapter, "--mode", streaming_resolution])
-    print(f"Setting host to {streaming_resolution}")
 
     if not args.audio:
         print("Muting host audio")
         subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "true"])
 
     if args.openrgb:
+        print(f"Turning on RGB with color {args.openrgb}")
         subprocess.run(["openrgb", "--noautoconnect", "-c", args.openrgb], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def stop_stream(default_adapter, default_resolution, args):
     print("Stream stopped")
-
-    subprocess.run(["xrandr", "--output", default_adapter, "--mode", default_resolution])
     print(f"Setting host to {default_resolution}")
+    subprocess.run(["xrandr", "--output", default_adapter, "--mode", default_resolution])
 
     if not args.audio:
         print("Resuming host audio")
         subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "false"])
 
     if args.openrgb:
+        print("Turning off RGB")
         subprocess.run(["openrgb", "--noautoconnect", "-c", "000000"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def main():
