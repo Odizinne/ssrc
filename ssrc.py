@@ -11,8 +11,8 @@ file.close()
 
 def get_output_info():
     xrandr_output = subprocess.check_output(["xrandr"]).decode("utf-8")
-    match = re.search(r'(?P<adapter>\w+-\d+) connected primary (?P<resolution>\d+x\d+)', xrandr_output)
-
+    match = re.search(r'(?P<adapter>[^\s]+) connected primary (?P<resolution>\d+x\d+)', xrandr_output)
+    
     if match:
         return match.group("adapter"), match.group("resolution")
     else:
