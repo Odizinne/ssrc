@@ -1,9 +1,5 @@
 # SSRC - Steam Stream Resolution Changer (for Linux)
 
-Python script written with the help of ChatGPT.
-
-**I made this for my own use. This is my first approach with python and i know nothing about it. No pretention here.**
-
 The goal of this project is to fix desktop resolution not matching client resolution when streaming with remote play on linux host.<br/>
 Also muting host audio when streaming (this can be disabled).<br/>
 This will only work with **X11** since i'm using xrandr for resolution changes.
