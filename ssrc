@@ -4,7 +4,7 @@ import re
 import subprocess
 
 log_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
-resolution_pattern = re.compile(r'Maximum capture: (\d+x\d+)')
+resolution_pattern = re.compile(r"Maximum capture: (\d+x\d+) (\d+.\d+) FPS")
 
 file = open(log_path, "w")
 file.close()
@@ -23,10 +23,10 @@ def extract_default_adapter_and_resolution():
 
     return default_adapter, default_resolution
 
-def start_stream(default_adapter, streaming_resolution):
+def start_stream(default_adapter, streaming_resolution, streaming_refresh_rate):
     print("Stream started")
     print(f"Setting host to requested client resolution: {streaming_resolution}")
-    subprocess.run(["gnome-randr", "--output", default_adapter, "--mode", streaming_resolution])
+    subprocess.run(["gnome-randr", "--output", default_adapter, "--mode", streaming_resolution, "--rate", streaming_refresh_rate])
     subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "true"])
 
 def stop_stream(default_adapter, default_resolution):
@@ -49,7 +49,9 @@ def main():
                 match = resolution_pattern.search(line)
                 if match:
                     streaming_resolution = match.group(1)
-                    start_stream(default_adapter, streaming_resolution)
+                    streaming_refresh_rate = match.group(2)
+                    print(f"{streaming_refresh_rate}")
+                    start_stream(default_adapter, streaming_resolution, streaming_refresh_rate)
             if "connection terminated" in line:
                 stop_stream(default_adapter, default_resolution)
 
