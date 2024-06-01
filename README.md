@@ -1,8 +1,9 @@
 # SSRC - Steam Stream Resolution Changer (for Linux)
 
 The goal of this project is to fix desktop resolution not matching client resolution when streaming with remote play on linux host.<br/>
-Also muting host audio when streaming (this can be disabled).<br/>
-This will only work with **X11** since i'm using xrandr for resolution changes.
+Also muting host audio when streaming.<br/>
+This will only work in gnome wayland.
+Feel free to edit it to work with your DE.
 
 ## Benefits
 
@@ -14,15 +15,8 @@ While you can stream at your native screen resolution, it may not be optimal:
 
 ## Requirements
 
-- xrandr
 - python3
-- watchdog
-- pyinstaller
-
-Optional:
-
-- openrgb (toggle RGB to single color when stream is on)
-- pactl (mute audio on host)
+- pactl
 
 ## How to install
 
@@ -36,22 +30,17 @@ Clone this repository and enter the directory:
 
 Run install.sh. You can add --autostart argument to create a user systemd service:
 
-`./install.sh` or `./install.sh --autostart`
-
-To uninstall run:
-
-`/install.sh --uninstall`
-
-## How to use
-
-Run `ssrc` from a terminal.
-
-Arguments:
-
-- `-a, --audio` Play audio on the host.
-- `-o, --openrgb "HexColorCode"` Use OpenRGB to turn on your lights to the desired color when stream is active. Turn off at stream end.
+`./install.sh`
 
 ## How does it work
 
 This looks for some defined strings in `~/.steam/steam/logs/streaming_log.txt` to know if a stream is started or stopped.<br/>
-It then set your monitor to the client resolution.
+It then set your monitor to the client resolution with gnome-randr, and reset when stream is ending.
+
+
+## Notes
+
+I removed X11 support since this is deprecated.
+You can still use ssrc.py if needed (won't be updated anymore)
+
+I'll port some options from old X11ssrc to the new one when i have time / motivation.
