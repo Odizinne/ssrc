@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+import os
+import re
+import subprocess
+
+log_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
+resolution_pattern = re.compile(r'Maximum capture: (\d+x\d+)')
+
+file = open(log_path, "w")
+file.close()
+
+import subprocess
+import re
+import atexit
+
+
+def extract_default_adapter_and_resolution():
+    gnome_randr_output = subprocess.check_output("gnome-randr", shell=True).decode('utf-8')
+    adapter_match = re.search(r'associated physical monitors:\n\t(.*) ', gnome_randr_output)
+    default_adapter = adapter_match.group(1) if adapter_match else None
+    resolution_match = re.search(r'(\d+x\d+).*\*\+', gnome_randr_output)
+    default_resolution = resolution_match.group(1) if resolution_match else None
+
+    return default_adapter, default_resolution
+
+def start_stream(default_adapter, streaming_resolution):
+    print("Stream started")
+    print(f"Setting host to requested client resolution: {streaming_resolution}")
+    subprocess.run(["gnome-randr", "--output", default_adapter, "--mode", streaming_resolution])
+    subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "true"])
+
+def stop_stream(default_adapter, default_resolution):
+    print("Stream stopped")
+    print(f"Setting host to {default_resolution}")
+    subprocess.run(["gnome-randr", "--output", default_adapter, "--mode", default_resolution])
+    subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "false"])
+
+def main():
+    default_adapter, default_resolution = extract_default_adapter_and_resolution()
+    print(f"Default display Adapter: {default_adapter}")
+    print(f"Default desktop Resolution: {default_resolution}")
+
+    atexit.register(stop_stream, default_adapter, default_resolution)
+
+    with subprocess.Popen(f"tail -F {log_path}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True) as tail_output:
+        for line in tail_output.stdout:
+            line = line.decode("utf-8")
+            if "Maximum capture" in line:
+                match = resolution_pattern.search(line)
+                if match:
+                    streaming_resolution = match.group(1)
+                    start_stream(default_adapter, streaming_resolution)
+            if "connection terminated" in line:
+                stop_stream(default_adapter, default_resolution)
+
+if __name__ == "__main__":
+    main()
+
