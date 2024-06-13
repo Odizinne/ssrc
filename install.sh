@@ -9,26 +9,29 @@ fi
 echo "Copying ssrc and gnome-randr to /usr/local/bin."
 
 sudo cp ssrc /usr/local/bin
-sudo cp gnome-randr /usr/local/bin
 
-mkdir -p ~/.config/systemd/user
+if [[ "$XDG_SESSION_TYPE" == "wayland" ]] && [[ "$XDG_CURRENT_DESKTOP" =~ "GNOME" ]]; then
+    echo "Detected Wayland session with GNOME."
+    read -p "Do you want to download and install custom version of gnome-randr? (required for gnome-wayland support) (Y/n): " install_gnome_randr
 
-cat <<EOF > ~/.config/systemd/user/ssrc.service
-[Unit]
-Description=Steam stream daemon
-After=gnome-session-wayland@gnome.target
+    install_gnome_randr=$(echo "${install_gnome_randr:-y}" | tr '[:upper:]' '[:lower:]')
 
-[Service]
-Type=simple
-ExecStart=/usr/local/bin/ssrc
+    if [[ "$install_gnome_randr" == "y" || "$install_gnome_randr" == "yes" ]]; then
+        GNOME_RANDR_URL="https://raw.githubusercontent.com/Odizinne/gnome-randr-py/main/gnome-randr"
+        GNOME_RANDR_LOCAL="/usr/local/bin/gnome-randr"
 
-[Install]
-WantedBy=graphical-session.target
-EOF
+        echo "Downloading gnome-randr..."
+        sudo curl -o $GNOME_RANDR_LOCAL $GNOME_RANDR_URL
 
-echo "Created ~/.config/systemd/user/ssrc.service."
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to download gnome-randr."
+            exit 1
+        fi
 
-systemctl --user enable ssrc.service
-systemctl --user start ssrc.service
+        sudo chmod +x $GNOME_RANDR_LOCAL
 
-echo "Enabled and started ssrc.service."
+        echo "gnome-randr installed successfully to /usr/local/bin."
+    fi
+fi
+
+echo "All tasks completed."

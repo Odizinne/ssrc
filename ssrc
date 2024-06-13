@@ -2,17 +2,13 @@
 import os
 import re
 import subprocess
+import atexit
 
 log_path = os.path.expanduser("~/.steam/steam/logs/streaming_log.txt")
 resolution_pattern = re.compile(r"Maximum capture: (\d+x\d+) (\d+.\d+) FPS")
 
 file = open(log_path, "w")
 file.close()
-
-import subprocess
-import re
-import atexit
-
 
 def extract_default_adapter_and_resolution():
     gnome_randr_output = subprocess.check_output("gnome-randr", shell=True).decode('utf-8')
